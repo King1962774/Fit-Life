@@ -15,9 +15,6 @@ python3 -m http.server 8080
 
 y luego abrir la URL que indique en el navegador.
 
-## Inicio de sesión (demo)
-
-No hay sistema de cuentas real: cualquier correo + contraseña entra como usuario normal. Para entrar como **administrador**, usar el correo/clave definidos en `js/constants.js` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`).
 
 ## Estructura del proyecto
 
