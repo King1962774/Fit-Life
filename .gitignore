@@ -1,0 +1,12 @@
+﻿.env
+.env.*
+*.pem
+*.key
+*.sql
+*.bak
+node_modules/
+.DS_Store
+*.log
+supabase/
+MIGRACION-SUPABASE.md
+README.md
