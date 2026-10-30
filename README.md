@@ -1,108 +1,176 @@
-# FitLife
+<div align="center">
 
+# FITLIFE
 
-App de registro de entrenamientos hecha en **vanilla JS (módulos ES) + HTML + CSS**, sin bundler ni framework. Todos los datos se guardan en el `localStorage` del navegador — es un build de demostración, no tiene backend.
+### Registro de entrenamientos, plan semanal y tienda deportiva
 
-## Cómo ejecutarlo
+**Aplicación web de seguimiento de entrenamientos construida con JavaScript puro y respaldada por Supabase.**
 
-Al ser módulos ES nativos (`<script type="module">`), no se puede abrir `index.html` directo con `file://` (los navegadores bloquean los imports por CORS). Hay que servirlo con cualquier servidor estático, por ejemplo:
+<br/>
+
+<img src="https://img.shields.io/badge/JavaScript-ES%20Modules-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5"/>
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3"/>
+<img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase"/>
+
+<img src="https://img.shields.io/badge/Roles-Usuario%20%7C%20Admin-6c63ff?style=for-the-badge&labelColor=0d1117" alt="Roles"/>
+
+<br/>
+
+[Sobre el proyecto](#sobre-el-proyecto) ·
+[Funcionalidades](#funcionalidades) ·
+[Ejecución](#ejecución) ·
+[Arquitectura](#arquitectura) ·
+[Modelo de datos](#modelo-de-datos) ·
+[Limitaciones](#limitaciones)
+
+</div>
+
+---
+
+## Sobre el proyecto
+
+**FitLife** es una aplicación de registro de entrenamientos desarrollada con **JavaScript vanilla (módulos ES), HTML y CSS**, sin bundler ni framework en el cliente. Los datos se almacenan en **Supabase**, que actúa como backend de la aplicación.
+
+Contempla dos perfiles con experiencias distintas:
+
+- **Usuario**: planifica y registra sus entrenamientos, sigue su peso corporal y compra o aparta productos deportivos.
+- **Administrador**: gestiona el catálogo de ejercicios, arma las rutinas, administra la tienda y supervisa la actividad de los usuarios.
+
+## Funcionalidades
+
+### Perfil de usuario
+
+| Módulo | Qué permite |
+|---|---|
+| **Hoy** | Ver el plan del día (el real o uno reprogramado), iniciar un entrenamiento guiado ejercicio por ejercicio con temporizador de descanso, registrar el peso corporal y consultar la racha de días y el volumen semanal. |
+| **Plan** | Consultar la rutina por día de la semana junto con la recomendación del entrenador, y marcar el plan del día como completado. |
+| **Progreso** | Registrar el peso y ver un gráfico de evolución frente a la meta. |
+| **Biblioteca** | Buscar ejercicios por nombre, músculo o equipo, y agregar ejercicios personalizados. |
+| **Historial** | Revisar sesiones pasadas (ejercicio por ejercicio, serie por serie) y el historial de cumplimiento del plan. |
+| **Market** | Buscar y filtrar productos por marca y precio, ver su detalle (imagen, marca, descripción, precio, stock y estado), y **comprar** o **apartar** unidades. Consultar el estado de las propias solicitudes: pendiente, confirmado, rechazado o completado. |
+
+### Perfil de administrador
+
+| Módulo | Qué permite |
+|---|---|
+| **Hoy** | Ver un directorio de los usuarios que han iniciado sesión y, por cada uno, el detalle serie por serie de lo registrado en cada ejercicio asignado. |
+| **Plan** | Armar la rutina de cada día a partir del catálogo y escribir la recomendación del entrenador. |
+| **Biblioteca** | Crear, editar y eliminar cualquier ejercicio del catálogo, ya sea por repeticiones o por tiempo. |
+| **Market** | Crear, editar, ocultar, publicar y eliminar productos; revisar todas las solicitudes y confirmarlas, rechazarlas o marcarlas como completadas. |
+
+> El administrador no ve el flujo de entrenamiento: esa experiencia es exclusiva del perfil de usuario.
+
+## Ejecución
+
+Al usar módulos ES nativos (`<script type="module">`), `index.html` no puede abrirse directamente con `file://`, porque los navegadores bloquean los imports por CORS. Basta con servir la carpeta con cualquier servidor estático.
+
+**Con Node.js**
 
 ```bash
 npx serve .
-# o
+```
+
+**Con Python**
+
+```bash
 python3 -m http.server 8080
 ```
 
-y luego abrir la URL que indique en el navegador.
+Después, abre en el navegador la URL que indique el servidor.
 
+### Requisitos
 
-## Estructura del proyecto
+- Un navegador moderno con soporte de módulos ES.
+- Node.js o Python, únicamente para servir los archivos estáticos.
+- Un proyecto de [Supabase](https://supabase.com/) con las tablas de la aplicación creadas.
+
+No hay dependencias que instalar ni paso de compilación.
+
+### Configuración de Supabase
+
+La aplicación necesita la **URL** y la **clave pública (anon key)** de tu proyecto de Supabase, que se obtienen en *Project Settings → API*. Colócalas en el archivo de configuración del cliente de Supabase.
+
+> Usa únicamente la clave `anon`. La clave `service_role` nunca debe incluirse en el código del cliente ni subirse al repositorio.
+
+## Arquitectura
 
 ```
 index.html
 style.css
 js/
-  app.js          → render raíz, login, navegación, shell de la app
-  state.js        → estado global en memoria (state.data, state.ui)
-  storage.js      → persistencia en localStorage + migraciones de datos viejos
-  constants.js    → enums, catálogo semilla, constantes globales
-  utils.js        → helpers de fecha/DOM/estadísticas
-  icons.js        → set de íconos SVG en línea
-  exercises.js    → catálogo de ejercicios: lectura, formato, CRUD (admin)
-  market.js       → lógica de Market: productos, solicitudes, stock/disponibilidad
-  views/
-    today.js      → pestaña "Hoy" (flujo de usuario + actividad de admin)
-    plan.js       → pestaña "Plan" (rutina semanal por día)
-    progress.js   → pestaña "Progreso" (peso corporal + gráfico)
-    library.js    → pestaña "Biblioteca" (catálogo de ejercicios)
-    history.js    → pestaña "Historial" (sesiones pasadas + cumplimiento de plan)
-    market.js     → pestaña "Market" (catálogo + panel admin)
-    workout.js    → entrenamiento guiado paso a paso (usado desde "Hoy")
+├── app.js            # Render raíz, login, navegación y shell de la aplicación
+├── state.js          # Estado global en memoria (state.data, state.ui)
+├── storage.js        # Capa de persistencia de datos con Supabase
+├── constants.js      # Enums, catálogo semilla y constantes globales
+├── utils.js          # Helpers de fecha, DOM y estadísticas
+├── icons.js          # Set de íconos SVG en línea
+├── exercises.js      # Catálogo de ejercicios: lectura, formato y CRUD (admin)
+├── market.js         # Lógica de Market: productos, solicitudes, stock y disponibilidad
+└── views/
+    ├── today.js      # Pestaña "Hoy" (flujo de usuario y actividad de admin)
+    ├── plan.js       # Pestaña "Plan" (rutina semanal por día)
+    ├── progress.js   # Pestaña "Progreso" (peso corporal y gráfico)
+    ├── library.js    # Pestaña "Biblioteca" (catálogo de ejercicios)
+    ├── history.js    # Pestaña "Historial" (sesiones pasadas y cumplimiento)
+    ├── market.js     # Pestaña "Market" (catálogo y panel de administración)
+    └── workout.js    # Entrenamiento guiado paso a paso (usado desde "Hoy")
 ```
 
-Patrón consistente en cada vista: `render*()` devuelve el HTML como string y `bind*Events()` conecta los listeners después de inyectarlo al DOM. La lógica de datos/negocio vive fuera de las vistas (`exercises.js`, `market.js`, `storage.js`), nunca duplicada entre pantallas.
+### Principios de diseño
 
-## Funcionalidades actuales
+- **Patrón consistente en cada vista**: `render*()` devuelve el HTML como string y `bind*Events()` conecta los listeners una vez inyectado en el DOM.
+- **Lógica fuera de las vistas**: la lógica de datos y de negocio vive en `exercises.js`, `market.js` y `storage.js`, y nunca se duplica entre pantallas.
+- **Estado único en memoria**: la información cargada se mantiene en un solo objeto, `state.data`, y los cambios se sincronizan con Supabase de forma centralizada.
 
-### Usuario
-- **Hoy**: ve el plan del día (según el día real o uno reprogramado), inicia un entrenamiento guiado ejercicio por ejercicio con temporizador de descanso, registra peso corporal, ve racha de días y volumen semanal.
-- **Plan**: consulta su rutina por día de la semana y la recomendación del entrenador para ese día; puede marcar el plan del día como completado.
-- **Progreso**: registra su peso y ve un gráfico de evolución contra su meta.
-- **Biblioteca**: busca ejercicios por nombre/músculo/equipo; puede agregar ejercicios personalizados.
-- **Historial**: ve sus sesiones pasadas (ejercicio por ejercicio, serie por serie) y su historial de cumplimiento de plan.
-- **Market**: busca y filtra productos deportivos por marca/precio, ve el detalle de cada uno (imagen, marca, descripción, precio, stock, estado), y puede **comprar** o **apartar** unidades. Ve el estado de sus propias solicitudes (pendiente/confirmado/rechazado/completado).
+## Modelo de datos
 
-### Administrador
-- **Hoy**: ya no ve el flujo de entrenamiento (eso es solo de usuarios). En su lugar ve un directorio de los correos que han iniciado sesión en el navegador y, por cada uno, el detalle serie por serie de lo que registró en cada ejercicio asignado. *(Nota visible en la propia UI: es un registro local de logins, no una base de usuarios real — ver limitaciones abajo.)*
-- **Plan**: arma la rutina de cada día del catálogo de ejercicios y escribe la recomendación del entrenador.
-- **Biblioteca**: crea, edita y elimina cualquier ejercicio del catálogo (tipo por reps o por tiempo).
-- **Market**: crea, edita, oculta/publica y elimina productos; revisa todas las solicitudes de compra/apartado y las confirma, rechaza o marca como completadas.
+La información de la aplicación se organiza en las siguientes entidades, almacenadas en Supabase:
 
-## Modelo de datos (resumen)
+| Entidad | Descripción |
+|---|---|
+| `profile`, `weightLogs` | Perfil y registro de peso corporal. |
+| `exercises` | Catálogo único (semilla y personalizados), con `type`: `"reps"` o `"time"`. |
+| `weeklyPlan[día]` | Ítems con la forma `{ exerciseId, sets, target, unit }`. |
+| `dayRecommendations[día]`, `dayOverrides[iso]` | Recomendaciones del entrenador y reprogramaciones puntuales. |
+| `history[]` | Sesiones registradas: `{ date, weekday, userId, exercises: [{ exerciseId, sets: [...] }] }`. |
+| `planCompletions[]` | Registro de cumplimiento del plan por día. |
+| `products[]` | `{ id, name, brand, description, price, image, stock, status, createdAt, updatedAt }`. |
+| `marketRequests[]` | Solicitudes, separadas de los productos: `{ id, userId, productId, quantity, type, status, createdAt, updatedAt }`. |
+| `registeredUsers[]` | `{ email, isAdmin, firstLogin, lastLogin }`: directorio de usuarios que han iniciado sesión. |
 
-Todo vive en un único objeto `state.data`, persistido en `localStorage` bajo la key `opengym-data`:
+### Regla de stock
 
-- `profile`, `weightLogs` — perfil y registro de peso corporal.
-- `exercises` — catálogo único (semilla + personalizados), con `type` ("reps" | "time").
-- `weeklyPlan[día]` — items `{ exerciseId, sets, target, unit }`.
-- `dayRecommendations[día]`, `dayOverrides[iso]` — recomendaciones y reprogramaciones puntuales.
-- `history[]` — sesiones registradas: `{ date, weekday, userId, exercises: [{ exerciseId, sets: [...] }] }`.
-- `planCompletions[]` — registro de cumplimiento de plan por día.
-- `products[]` — `{ id, name, brand, description, price, image, stock, status, createdAt, updatedAt }`.
-- `marketRequests[]` — separadas de los productos: `{ id, userId, productId, quantity, type, status, createdAt, updatedAt }`.
-- `registeredUsers[]` — `{ email, isAdmin, firstLogin, lastLogin }`, directorio mínimo de logins.
+La lógica de stock está centralizada en `market.js`:
 
-**Regla de stock centralizada** (en `market.js`): el `stock` real de un producto solo se descuenta cuando una solicitud se **confirma**. Mientras está "pendiente", su cantidad queda retenida (calculada al vuelo, no duplicada en el producto) para que dos usuarios no puedan reservar más unidades de las que existen.
+1. El `stock` real de un producto **solo se descuenta cuando una solicitud se confirma**.
+2. Mientras una solicitud está en estado *pendiente*, su cantidad queda **retenida**. Ese valor se calcula al vuelo y no se duplica en el producto.
+3. Así, dos usuarios no pueden reservar más unidades de las que existen.
+
+Ciclo de vida de una solicitud:
+
+```
+pendiente  ──►  confirmado  ──►  completado
+    └────────►  rechazado
+```
+
+## Limitaciones
+
+- **Sin pagos reales**: el Market gestiona solicitudes de compra y apartado, pero no procesa pagos.
+- **Seguridad en el cliente**: al ser una aplicación sin servidor propio, la protección de los datos depende de las políticas de acceso (*Row Level Security*) configuradas en Supabase. Deben estar activas en todas las tablas.
+- **Regla de stock en el cliente**: la validación de disponibilidad se calcula en la aplicación; para un entorno de producción conviene reforzarla en la base de datos.
+
+
+
+## Autor
+
+**King1962774**
+GitHub: [@King1962774](https://github.com/King1962774)
 
 ---
 
-## Mejoras pendientes / roadmap
+<div align="center">
 
-### Backend y cuentas (lo más importante)
-- [ ] **Base de datos y API real.** Hoy todo vive en el `localStorage` del navegador: no hay sincronización entre dispositivos, y si el usuario limpia datos del navegador pierde todo.
-- [ ] **Sistema de autenticación real** (cuentas con contraseña hasheada, sesiones/tokens). Actualmente cualquier correo/contraseña entra como usuario, y la contraseña de admin está en texto plano en `constants.js` — inaceptable para producción.
-- [ ] **Usuarios como entidad real**, no un log de logins. Esto permitiría:
-  - Historial y plan realmente aislados por usuario (hoy el `weeklyPlan`, `history`, etc. son globales al navegador, no por cuenta).
-  - Que un admin gestione un roster real de usuarios (dar de alta/baja, ver perfiles).
-- [ ] Migrar `registeredUsers` (actualmente un directorio local de "quién ha iniciado sesión en este navegador") a una tabla de usuarios del backend.
+**FitLife** · *Entrena, registra, progresa*
 
-### Market
-- [ ] Notificaciones (push, email o al menos un badge/toast) cuando cambia el estado de una solicitud, en vez de que el usuario tenga que revisar "Mis solicitudes" manualmente.
-- [ ] Expiración automática de apartados pendientes (hoy quedan "pendiente" indefinidamente si el admin no actúa).
-- [ ] Carga de imágenes real (hoy solo se acepta una URL) — subir archivo y almacenarlo.
-- [ ] Historial/auditoría de cambios de stock y precio por producto.
-- [ ] Paginación o scroll infinito cuando el catálogo/las solicitudes crezcan mucho (hoy se renderiza todo de una vez).
-- [ ] Métodos de pago reales o integración con pasarela, si "comprar" debe procesar dinero de verdad (hoy solo registra la intención).
-
-### Entrenamientos / plan
-- [ ] Validar que el peso/duración registrado en un ejercicio tenga sentido según su historial (evitar errores de tipeo obvios).
-- [ ] Exportar historial (CSV/PDF) para el usuario o el entrenador.
-- [ ] Notificar al usuario cuando el entrenador actualiza la recomendación o el plan de un día.
-- [ ] Multi-rutina: hoy solo existe una rutina semanal global; con cuentas reales cada usuario debería tener la suya.
-
-### Calidad de código / infraestructura
-- [ ] Pruebas automatizadas (unitarias para `exercises.js`/`market.js`, y al menos smoke tests de UI).
-- [ ] Manejo de concurrencia entre pestañas del mismo navegador (hoy dos pestañas abiertas pueden pisarse los datos en `localStorage`).
-- [ ] Revisión de accesibilidad (roles ARIA, foco de teclado en modales, contraste).
-- [ ] Sanitización/validación de inputs más estricta en formularios de admin (precio, stock, URLs de imagen).
-- [ ] CI básico que corra `node --check` / linter sobre los módulos antes de desplegar.
+</div>
