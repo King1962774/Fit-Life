@@ -2,6 +2,7 @@
    Íconos: set mínimo de SVG en línea
    ============================================================ */
 const PATHS = {
+  filetext: `<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>`,
   dumbbell: `<path d="M6.5 6.5l11 11M4 9v6M2 8v8M20 9v6M22 8v8M8 5l-2 2 8 8 2-2z"/>`,
   calendar: `<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>`,
   trending: `<polyline points="3,17 9,11 13,15 21,6"/><polyline points="15,6 21,6 21,12"/>`,

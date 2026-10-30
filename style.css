@@ -545,3 +545,12 @@ button:disabled:hover { background: inherit; }
     transition-duration: 0.001ms !important;
   }
 }
+/* Botón de términos junto al login + modal */
+.login-actions { display: flex; gap: 8px; margin-top: 14px; width: 100%; }
+.login-actions .btn-primary { flex: 1; width: auto; }
+.btn-terms { gap: 6px; padding: 9px 12px; white-space: nowrap; flex-shrink: 0; }
+.terms-card { width: min(520px, 100%); max-height: 88vh; display: flex; flex-direction: column; }
+.terms-body { overflow-y: auto; margin-top: 12px; padding-right: 6px; font-size: 13px; line-height: 1.55; color: var(--ink); }
+.terms-body h3 { font-size: 13px; font-weight: 600; margin: 14px 0 4px; }
+.terms-body p { margin: 0; color: var(--muted); }
+.terms-body .terms-updated { font-size: 11px; color: var(--placeholder); }

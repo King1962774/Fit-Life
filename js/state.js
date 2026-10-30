@@ -33,6 +33,7 @@ export const state = {
     loginError: "",
     loginInfo: "",
     authMode: "login", // "login" | "signup"
+    showTerms: false,
     signupStep: 1, // 1: cuenta, 2: cuerpo
     signupError: "",
     signupSubmitting: false,

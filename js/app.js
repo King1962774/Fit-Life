@@ -79,6 +79,39 @@ function renderLogin() {
         <p class="login-sub login-fade delay-2">${mode === "signup" ? "crea tu perfil en segundos" : "tu registro, tus datos"}</p>
         ${mode === "signup" ? renderSignupForm() : renderLoginForm()}
       </div>
+      ${state.ui.showTerms ? renderTermsModal() : ""}
+    </div>
+  `;
+}
+
+/* Modal de términos y condiciones (se abre desde el botón junto al login). */
+function renderTermsModal() {
+  return `
+    <div class="modal-overlay" data-action="close-terms">
+      <div class="modal-card terms-card" role="dialog" aria-modal="true" aria-labelledby="terms-title" onclick="event.stopPropagation()">
+        <div class="modal-head-row">
+          <p id="terms-title" style="font-family:'Fraunces',serif;font-size:19px;margin:0">Términos y condiciones</p>
+          <button type="button" class="icon-btn" data-action="close-terms" aria-label="Cerrar">${icon("x", 16)}</button>
+        </div>
+        <div class="terms-body">
+          <p class="terms-updated">Última actualización: ${new Date().toLocaleDateString("es", { year: "numeric", month: "long" })}</p>
+          <h3>1. Aceptación</h3>
+          <p>Al crear una cuenta o usar FitLife aceptas estos términos. Si no estás de acuerdo, por favor no utilices la aplicación.</p>
+          <h3>2. Uso de la aplicación</h3>
+          <p>FitLife es una herramienta para registrar tus entrenamientos, tu peso y tu progreso. Te comprometes a usarla de forma legítima y a no intentar acceder a datos de otros usuarios ni vulnerar el servicio.</p>
+          <h3>3. Tu cuenta</h3>
+          <p>Eres responsable de mantener la confidencialidad de tu correo y contraseña y de la actividad realizada desde tu cuenta. Debes proporcionar información veraz.</p>
+          <h3>4. Datos personales</h3>
+          <p>Guardamos en la nube (Supabase) los datos que ingresas: nombre, correo, medidas corporales, rutinas y registros de entrenamiento. Se usan únicamente para el funcionamiento de la app y no se venden a terceros. Puedes solicitar la eliminación de tu cuenta y tus datos en cualquier momento.</p>
+          <h3>5. Aviso de salud</h3>
+          <p>FitLife no ofrece consejo médico. Consulta a un profesional de la salud antes de iniciar o cambiar un programa de ejercicio. Entrenas bajo tu propia responsabilidad.</p>
+          <h3>6. Disponibilidad y cambios</h3>
+          <p>Podemos modificar, suspender o interrumpir funciones del servicio, así como actualizar estos términos. El uso continuado implica la aceptación de los cambios.</p>
+          <h3>7. Limitación de responsabilidad</h3>
+          <p>El servicio se ofrece "tal cual". No nos hacemos responsables por lesiones, pérdida de datos o perjuicios derivados del uso de la aplicación, en la medida permitida por la ley.</p>
+        </div>
+        <button type="button" class="btn-primary" data-action="close-terms" style="margin-top:14px">Entendido</button>
+      </div>
     </div>
   `;
 }
@@ -99,9 +132,14 @@ function renderLoginForm() {
       </div>
       ${err ? `<p class="error-text shake" style="text-align:center">${esc(err)}</p>` : ""}
       ${info ? `<p class="login-sub" style="text-align:center;margin-top:6px">${esc(info)}</p>` : ""}
-      <button type="submit" class="btn-primary login-fade delay-5 ${submitting ? "btn-loading" : ""}" style="margin-top:14px" ${submitting ? "disabled" : ""}>
-        ${submitting ? `<span class="spin" style="margin-right:8px;display:flex">${icon("loader", 15, "#fff")}</span>Iniciando sesión…` : "Iniciar sesión"}
-      </button>
+      <div class="login-actions login-fade delay-5">
+        <button type="submit" class="btn-primary ${submitting ? "btn-loading" : ""}" ${submitting ? "disabled" : ""}>
+          ${submitting ? `<span class="spin" style="margin-right:8px;display:flex">${icon("loader", 15, "#fff")}</span>Iniciando sesión…` : "Iniciar sesión"}
+        </button>
+        <button type="button" class="btn-ghost btn-terms" data-action="open-terms" title="Términos y condiciones" aria-label="Términos y condiciones">
+          ${icon("filetext", 15)}<span>Términos</span>
+        </button>
+      </div>
     </form>
     <p class="auth-switch login-fade delay-5">¿No tienes perfil? <button type="button" class="auth-switch-link" data-action="go-signup">Crea uno aquí</button></p>
     <p class="login-footnote login-fade delay-5">Tu cuenta y tus datos viven en la nube (Supabase): puedes entrar desde cualquier dispositivo.</p>
@@ -173,6 +211,16 @@ function renderSignupForm() {
 }
 
 function bindLoginEvents() {
+  const openTerms = qs('[data-action="open-terms"]');
+  if (openTerms) openTerms.addEventListener("click", () => {
+    state.ui.showTerms = true;
+    render();
+  });
+  qsa('[data-action="close-terms"]').forEach((el) => el.addEventListener("click", () => {
+    state.ui.showTerms = false;
+    render();
+  }));
+
   const goSignup = qs('[data-action="go-signup"]');
   if (goSignup) goSignup.addEventListener("click", () => {
     state.ui.authMode = "signup";
