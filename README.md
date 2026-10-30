@@ -74,35 +74,5 @@ Todo vive en un único objeto `state.data`, persistido en `localStorage` bajo la
 
 **Regla de stock centralizada** (en `market.js`): el `stock` real de un producto solo se descuenta cuando una solicitud se **confirma**. Mientras está "pendiente", su cantidad queda retenida (calculada al vuelo, no duplicada en el producto) para que dos usuarios no puedan reservar más unidades de las que existen.
 
----
 
-## Mejoras pendientes / roadmap
 
-### Backend y cuentas (lo más importante)
-- [ ] **Base de datos y API real.** Hoy todo vive en el `localStorage` del navegador: no hay sincronización entre dispositivos, y si el usuario limpia datos del navegador pierde todo.
-- [ ] **Sistema de autenticación real** (cuentas con contraseña hasheada, sesiones/tokens). Actualmente cualquier correo/contraseña entra como usuario, y la contraseña de admin está en texto plano en `constants.js` — inaceptable para producción.
-- [ ] **Usuarios como entidad real**, no un log de logins. Esto permitiría:
-  - Historial y plan realmente aislados por usuario (hoy el `weeklyPlan`, `history`, etc. son globales al navegador, no por cuenta).
-  - Que un admin gestione un roster real de usuarios (dar de alta/baja, ver perfiles).
-- [ ] Migrar `registeredUsers` (actualmente un directorio local de "quién ha iniciado sesión en este navegador") a una tabla de usuarios del backend.
-
-### Market
-- [ ] Notificaciones (push, email o al menos un badge/toast) cuando cambia el estado de una solicitud, en vez de que el usuario tenga que revisar "Mis solicitudes" manualmente.
-- [ ] Expiración automática de apartados pendientes (hoy quedan "pendiente" indefinidamente si el admin no actúa).
-- [ ] Carga de imágenes real (hoy solo se acepta una URL) — subir archivo y almacenarlo.
-- [ ] Historial/auditoría de cambios de stock y precio por producto.
-- [ ] Paginación o scroll infinito cuando el catálogo/las solicitudes crezcan mucho (hoy se renderiza todo de una vez).
-- [ ] Métodos de pago reales o integración con pasarela, si "comprar" debe procesar dinero de verdad (hoy solo registra la intención).
-
-### Entrenamientos / plan
-- [ ] Validar que el peso/duración registrado en un ejercicio tenga sentido según su historial (evitar errores de tipeo obvios).
-- [ ] Exportar historial (CSV/PDF) para el usuario o el entrenador.
-- [ ] Notificar al usuario cuando el entrenador actualiza la recomendación o el plan de un día.
-- [ ] Multi-rutina: hoy solo existe una rutina semanal global; con cuentas reales cada usuario debería tener la suya.
-
-### Calidad de código / infraestructura
-- [ ] Pruebas automatizadas (unitarias para `exercises.js`/`market.js`, y al menos smoke tests de UI).
-- [ ] Manejo de concurrencia entre pestañas del mismo navegador (hoy dos pestañas abiertas pueden pisarse los datos en `localStorage`).
-- [ ] Revisión de accesibilidad (roles ARIA, foco de teclado en modales, contraste).
-- [ ] Sanitización/validación de inputs más estricta en formularios de admin (precio, stock, URLs de imagen).
-- [ ] CI básico que corra `node --check` / linter sobre los módulos antes de desplegar.
